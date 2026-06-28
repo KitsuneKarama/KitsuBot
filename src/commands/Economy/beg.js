@@ -5,10 +5,10 @@ import { botConfig } from '../../config/bot.js';
 import { withErrorHandling, createError, ErrorTypes } from '../../utils/errorHandler.js';
 import { InteractionHelper } from '../../utils/interactionHelper.js';
 
-const COOLDOWN = 30 * 60 * 1000;
-const MIN_WIN = 50;
-const MAX_WIN = 200;
-const SUCCESS_CHANCE = 0.7;
+const COOLDOWN = 10000;
+const MIN_WIN = 10000;
+const MAX_WIN = 50000;
+const SUCCESS_CHANCE = 0.5;
 
 export default {
     data: new SlashCommandBuilder()
