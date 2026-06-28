@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js';
 import { createEmbed, errorEmbed, successEmbed, infoEmbed, warningEmbed } from '../../utils/embeds.js';
-import { getEconomyData, setEconomyData, getMaxBankCapacity } from '../../utils/economy.js';
+import { getEconomyData, setEconomyData } from '../../utils/economy.js';
 import { withErrorHandling, createError, ErrorTypes } from '../../utils/errorHandler.js';
 
 import { InteractionHelper } from '../../utils/interactionHelper.js';
@@ -8,12 +8,11 @@ export default {
     data: new SlashCommandBuilder()
         .setName('withdraw')
         .setDescription('Withdraw money from your bank to your wallet')
-        .addIntegerOption(option =>
+        .addStringOption(option =>
             option
                 .setName('amount')
                 .setDescription('Amount to withdraw (number or "all")')
                 .setRequired(true)
-                .setMinValue(1)
         ),
 
     execute: withErrorHandling(async (interaction, config, client) => {
@@ -21,7 +20,7 @@ export default {
             
             const userId = interaction.user.id;
             const guildId = interaction.guildId;
-            const amountInput = interaction.options.getInteger("amount");
+            const amountInput = interaction.options.getString("amount");
 
             const userData = await getEconomyData(client, guildId, userId);
             
@@ -34,7 +33,20 @@ export default {
                 );
             }
 
-            let withdrawAmount = amountInput;
+            let withdrawAmount;
+            if (amountInput.toLowerCase() === 'all') {
+                withdrawAmount = userData.bank;
+            } else {
+                withdrawAmount = parseInt(amountInput, 10);
+                if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+                    throw createError(
+                        "Invalid withdrawal amount",
+                        ErrorTypes.VALIDATION,
+                        `Please enter a valid number or 'all'. You entered: \`${amountInput}\``,
+                        { amountInput, userId }
+                    );
+                }
+            }
 
             if (withdrawAmount <= 0) {
                 throw createError(
