@@ -170,13 +170,16 @@ export function validatePurchase(itemId, userData, quantity = 1) {
         }
     }
 
-    if (item.type === 'upgrade' && item.maxLevel) {
+    if (item.type === 'upgrade') {
         const currentLevel = upgrades[itemId] || 0;
-        if (currentLevel + purchaseQuantity > item.maxLevel) {
-            return { 
-                valid: false, 
-                reason: `You can only purchase ${item.name} up to level ${item.maxLevel}` 
-            };
+        // bank_upgrade_1 is allowed to be purchased multiple times; effect capped elsewhere
+        if (itemId !== 'bank_upgrade_1' && item.maxLevel) {
+            if (currentLevel + purchaseQuantity > item.maxLevel) {
+                return { 
+                    valid: false, 
+                    reason: `You can only purchase ${item.name} up to level ${item.maxLevel}` 
+                };
+            }
         }
     }
 
