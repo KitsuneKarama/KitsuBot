@@ -25,7 +25,7 @@ export function getLavalinkNodes() {
     const node = {
         identifier: process.env.LAVALINK_NAME || 'Main',
         name: process.env.LAVALINK_NAME || 'Main',
-        host: process.env.LAVALINK_HOST || 'lavalink',
+        host: process.env.LAVALINK_HOST || 'localhost',
         port: parseInt(process.env.LAVALINK_PORT) || 2333,
         password: process.env.LAVALINK_PASSWORD || 'youshallnotpass',
         secure: parseBoolean(process.env.LAVALINK_SECURE),
