@@ -7,7 +7,7 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 const FISH_COOLDOWN = 45 * 60 * 1000; 
 const BASE_MIN_REWARD = 30000;
 const BASE_MAX_REWARD = 50000;
-const FISHING_ROD_MULTIPLIER = 1.5;
+const DEFAULT_FISHING_ROD_MULTIPLIER = 1.5;
 
 const FISH_TYPES = [
     { name: 'Bass', emoji: '🐟', rarity: 'common' },
@@ -45,6 +45,7 @@ export default {
             const userData = await getEconomyData(client, guildId, userId);
             const lastFish = userData.lastFish || 0;
             const hasFishingRod = userData.inventory["fishing_rod"] || 0;
+            const hasUpgradedRod = (userData.upgrades && userData.upgrades['fishing_rod_upgrade']) || 0;
 
             if (now < lastFish + FISH_COOLDOWN) {
                 const remaining = lastFish + FISH_COOLDOWN - now;
@@ -88,9 +89,14 @@ export default {
             let finalEarned = baseEarned;
             let multiplierMessage = "";
 
-            if (hasFishingRod > 0) {
-                finalEarned = Math.floor(baseEarned * FISHING_ROD_MULTIPLIER);
-                multiplierMessage = `\n🎣 **Fishing Rod Bonus: +50%**`;
+            const fishingMultiplier = hasUpgradedRod > 0 ? 2.0 : (hasFishingRod > 0 ? DEFAULT_FISHING_ROD_MULTIPLIER : 1.0);
+            const fishingDurability = hasUpgradedRod > 0 ? 200 : (hasFishingRod > 0 ? 100 : null);
+
+            if (hasFishingRod > 0 || hasUpgradedRod > 0) {
+                finalEarned = Math.floor(baseEarned * fishingMultiplier);
+                const percent = Math.round((fishingMultiplier - 1) * 100);
+                multiplierMessage = `\n🎣 **Fishing Rod Bonus: +${percent}%**`;
+                if (fishingDurability) multiplierMessage += ` (Durability: ${fishingDurability})`;
             }
 
             const catchMessage = CATCH_MESSAGES[Math.floor(Math.random() * CATCH_MESSAGES.length)];

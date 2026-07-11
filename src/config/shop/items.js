@@ -75,6 +75,19 @@ roleId: null,
         }
     },
     {
+        id: 'fishing_rod_upgrade',
+        name: 'Fishing Rod Upgrade',
+        price: 15000,
+        description: 'Upgrades your fishing rod to an enhanced model with increased durability and yield.',
+        type: 'upgrade',
+        maxLevel: 1,
+        effect: {
+            type: 'fishing_yield',
+            multiplier: 2.0,
+            durability: 200
+        }
+    },
+    {
         id: 'pickaxe',
         name: '⛏️ Pickaxe',
         price: 7500,
