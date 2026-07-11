@@ -104,7 +104,7 @@ announcementChannel: null,
             enabled: true,
             schedule: [
                 {
-day: 0,
+day: 1,
 discount: 0.2,
                     message: '🔥 **Weekend Sale!** 20% off all items!'
                 },
