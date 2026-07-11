@@ -21,8 +21,8 @@ export default {
         .addIntegerOption(option =>
             option
                 .setName('quantity')
-                .setDescription('Quantity to buy (default: 1)')
-                .setRequired(false)
+                .setDescription('Quantity to buy')
+                .setRequired(true)
                 .setMinValue(1)
                 .setMaxValue(10)
         ),
