@@ -29,6 +29,8 @@ services:
     restart: unless-stopped
     environment:
       - LAVALINK_PASSWORD=${LAVALINK_PASSWORD:-youshallnotpass}
+    ports:
+      - "2333:2333"
     volumes:
       - ./lavalink/application.yml:/opt/Lavalink/application.yml
     networks:
