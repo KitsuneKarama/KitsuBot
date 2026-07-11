@@ -67,7 +67,7 @@ export async function loadCommands(client) {
             const commandDir = path.dirname(filePath);
             const category = path.basename(commandDir);
             
-            const commandModule = await import(`file://${filePath}`);
+            const commandModule = await import(pathToFileURL(filePath).href);
             const command = commandModule.default || commandModule;
             
             if (!command.data || !command.execute) {
