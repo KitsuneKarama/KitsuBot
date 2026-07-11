@@ -22,7 +22,7 @@ cooldown: 86400000,
         
         effect: {
             type: 'bank_capacity',
-            multiplier: 1.5
+            multiplier: 2
         }
     },
     {
@@ -46,7 +46,7 @@ cooldown: 86400000,
 roleId: null,
         effect: {
             type: 'daily_bonus',
-            multiplier: 1.1
+            multiplier: 1.5
         }
     },
     {
