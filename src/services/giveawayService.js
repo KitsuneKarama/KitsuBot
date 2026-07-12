@@ -2,7 +2,7 @@
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } from 'discord.js';
 import { logger } from '../utils/logger.js';
-import { TitanBotError, ErrorTypes } from '../utils/errorHandler.js';
+import { DefendoBotError, ErrorTypes } from '../utils/errorHandler.js';
 import { getColor } from '../config/bot.js';
 import { getEndedGiveaways, markGiveawayEnded } from '../utils/database.js';
 import { checkRateLimit, getRateLimitStatus } from '../utils/rateLimiter.js';
@@ -17,6 +17,7 @@ function getGiveawayInteractionKey(userId, giveawayId) {
 export function parseDuration(durationString) {
     if (!durationString || typeof durationString !== 'string') {
         throw new TitanBotError(
+        throw new DefendoBotError(
             'Invalid duration format provided',
             ErrorTypes.VALIDATION,
             'Please provide a valid duration (e.g., 1h, 30m, 5d, 10s).',
@@ -29,6 +30,7 @@ export function parseDuration(durationString) {
 
     if (!match) {
         throw new TitanBotError(
+        throw new DefendoBotError(
             `Invalid duration format: ${durationString}`,
             ErrorTypes.VALIDATION,
             'Invalid duration format. Use: 1h, 30m, 5d, 10s (min: 10s, max: 30d)',
@@ -41,6 +43,7 @@ export function parseDuration(durationString) {
 
     if (amount <= 0 || amount > 999) {
         throw new TitanBotError(
+        throw new DefendoBotError(
             `Duration amount out of range: ${amount}`,
             ErrorTypes.VALIDATION,
             'Duration amount must be between 1 and 999.',
@@ -64,6 +67,7 @@ export function parseDuration(durationString) {
             break;
         default:
             throw new TitanBotError(
+            throw new DefendoBotError(
                 `Unknown duration unit: ${unit}`,
                 ErrorTypes.VALIDATION,
                 'Please use s (seconds), m (minutes), h (hours), or d (days).',
@@ -74,6 +78,7 @@ export function parseDuration(durationString) {
     const maxDuration = 30 * 24 * 60 * 60 * 1000; 
     if (ms > maxDuration) {
         throw new TitanBotError(
+        throw new DefendoBotError(
             `Duration exceeds maximum: ${ms}ms > ${maxDuration}ms`,
             ErrorTypes.VALIDATION,
             'Maximum duration is 30 days.',
@@ -84,6 +89,7 @@ export function parseDuration(durationString) {
     const minDuration = 10 * 1000; 
     if (ms < minDuration) {
         throw new TitanBotError(
+        throw new DefendoBotError(
             `Duration below minimum: ${ms}ms < ${minDuration}ms`,
             ErrorTypes.VALIDATION,
             'Minimum duration is 10 seconds.',
@@ -97,6 +103,7 @@ export function parseDuration(durationString) {
 export function validatePrize(prize) {
     if (!prize || typeof prize !== 'string') {
         throw new TitanBotError(
+        throw new DefendoBotError(
             'Prize must be a non-empty string',
             ErrorTypes.VALIDATION,
             'Please provide a valid prize description.',
@@ -107,6 +114,7 @@ export function validatePrize(prize) {
     const trimmed = prize.trim();
     if (trimmed.length === 0 || trimmed.length > 256) {
         throw new TitanBotError(
+        throw new DefendoBotError(
             `Prize length out of range: ${trimmed.length}`,
             ErrorTypes.VALIDATION,
             'Prize must be between 1 and 256 characters.',
@@ -120,6 +128,7 @@ export function validatePrize(prize) {
 export function validateWinnerCount(winnerCount) {
     if (!Number.isInteger(winnerCount) || winnerCount < 1 || winnerCount > 10) {
         throw new TitanBotError(
+        throw new DefendoBotError(
             `Invalid winner count: ${winnerCount}`,
             ErrorTypes.VALIDATION,
             'Winner count must be between 1 and 10.',
@@ -221,6 +230,7 @@ export function selectWinners(participants, winnerCount) {
 
     if (!Number.isInteger(winnerCount) || winnerCount < 1) {
         throw new TitanBotError(
+        throw new DefendoBotError(
             'Invalid winner count for selection',
             ErrorTypes.VALIDATION,
             'Winner count must be at least 1.',
@@ -269,6 +279,7 @@ export async function endGiveaway(client, giveaway, guildId, endedBy) {
     try {
         if (!giveaway) {
             throw new TitanBotError(
+                        throw new DefendoBotError(
                 'Giveaway object is null or undefined',
                 ErrorTypes.VALIDATION,
                 'Cannot end a non-existent giveaway.',
@@ -278,6 +289,7 @@ export async function endGiveaway(client, giveaway, guildId, endedBy) {
 
         if (giveaway.ended === true || giveaway.isEnded === true) {
             throw new TitanBotError(
+                        throw new DefendoBotError(
                 `Giveaway ${giveaway.messageId} is already ended`,
                 ErrorTypes.VALIDATION,
                 'This giveaway has already ended.',
