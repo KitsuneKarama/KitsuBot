@@ -141,7 +141,7 @@ export const botConfig = {
     },
     footer: {
       // Default footer text used in bot embeds.
-      text: "Titan Bot",
+      text: "kitsunBot",
       // Footer icon URL (null = no icon).
       icon: null,
     },
@@ -456,8 +456,8 @@ export const botConfig = {
     welcome: true,
 
     // Community engagement systems.
-    tickets: true,
-    giveaways: true,
+    tickets: false,
+    giveaways: false,
     birthday: true,
     counter: true,
 
@@ -473,7 +473,7 @@ export const botConfig = {
     utility: true,
     community: true,
     fun: true,
-    music: true,
+    music: false,
   },
 };
 
