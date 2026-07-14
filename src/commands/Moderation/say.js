@@ -83,7 +83,16 @@ export default {
             });
         }
 
-        const memberPermissions = channel.permissionsFor(interaction.member ?? interaction.user);
+        let invokingMember = interaction.member;
+        if (!invokingMember && interaction.guild) {
+            try {
+                invokingMember = await interaction.guild.members.fetch(interaction.user.id);
+            } catch (e) {
+                invokingMember = null;
+            }
+        }
+
+        const memberPermissions = channel.permissionsFor(invokingMember);
         const botPermissions = channel.permissionsFor(interaction.guild.members.me);
 
         if (!memberPermissions?.has(PermissionFlagsBits.SendMessages)) {
