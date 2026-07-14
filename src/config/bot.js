@@ -494,8 +494,12 @@ export function validateConfig(config) {
     logger.debug('NODE_ENV:', process.env.NODE_ENV);
   }
 
-  if (!process.env.DISCORD_TOKEN && !process.env.TOKEN) {
+  const botToken = process.env.DISCORD_TOKEN || process.env.TOKEN;
+
+  if (!botToken) {
     errors.push("Bot token is required (DISCORD_TOKEN or TOKEN environment variable)");
+  } else if (!/^[A-Za-z0-9_\-.]+$/.test(botToken) || botToken.split('.').length !== 3) {
+    errors.push("Bot token appears invalid. Ensure DISCORD_TOKEN or TOKEN is set to a valid Discord bot token.");
   }
 
   if (!process.env.CLIENT_ID) {

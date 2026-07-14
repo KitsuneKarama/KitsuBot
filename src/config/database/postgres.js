@@ -103,8 +103,8 @@ export function resolvePostgresPoolConfig() {
     const user = process.env.POSTGRES_USER || 'postgres';
 
     // Only include password if it's explicitly provided and is a non-empty string.
-    const rawPassword = process.env.POSTGRES_PASSWORD;
-    const password = rawPassword === undefined || rawPassword === null || rawPassword === '' ? undefined : String(rawPassword);
+    const rawPassword = process.env.POSTGRES_PASSWORD ?? process.env.PGPASSWORD;
+    const password = typeof rawPassword === 'string' && rawPassword.trim() !== '' ? rawPassword : undefined;
 
     const baseConfig = {
         host,
