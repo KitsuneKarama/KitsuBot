@@ -12,7 +12,7 @@ function normalizeBoundaryContext(context = {}) {
 }
 
 export function ensureTypedServiceError(error, options = {}) {
-  if (error instanceof DefendoBotError) {
+  if (error instanceof TitanBotError) {
     return error;
   }
 

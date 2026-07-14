@@ -57,27 +57,9 @@ class PostgreSQLDatabase {
                     logger.error('PostgreSQL pool error:', error);
                 });
 
-                let client;
-
-                try {
-                    client = await this.pool.connect();
-                    await client.query('SELECT NOW()');
-                } catch (error) {
-                    if (error?.message?.includes('client password must be a string')) {
-                        const wrappedError = new Error(
-                            'PostgreSQL authentication failed: password required but not provided. ' +
-                            'Set POSTGRES_PASSWORD or PGPASSWORD, or use a valid DATABASE_URL/POSTGRES_URL.'
-                        );
-                        wrappedError.code = 'POSTGRES_MISSING_PASSWORD';
-                        throw wrappedError;
-                    }
-
-                    throw error;
-                } finally {
-                    if (client) {
-                        client.release();
-                    }
-                }
+                const client = await this.pool.connect();
+                await client.query('SELECT NOW()');
+                client.release();
 
                 this.lastFailureReason = null;
                 this.lastFailureMessage = null;

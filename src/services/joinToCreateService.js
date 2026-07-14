@@ -8,7 +8,7 @@ import {
     formatChannelName as formatChannelNameUtil
 } from '../utils/database.js';
 import { logger } from '../utils/logger.js';
-import { DefendoBotError, ErrorTypes } from '../utils/errorHandler.js';
+import { TitanBotError, ErrorTypes } from '../utils/errorHandler.js';
 import { logEvent, EVENT_TYPES } from './loggingService.js';
 import { formatLogLine } from '../utils/logging/logEmbeds.js';
 import { ChannelType, PermissionFlagsBits } from 'discord.js';
@@ -29,7 +29,7 @@ const ALLOWED_TEMPLATE_PLACEHOLDERS = new Set([
 
 export function validateChannelNameTemplate(template) {
     if (!template || typeof template !== 'string') {
-        throw new DefendoBotError(
+        throw new TitanBotError(
             'Invalid channel template: must be a non-empty string',
             ErrorTypes.VALIDATION,
             'Channel name template must be valid text.'
@@ -39,7 +39,7 @@ export function validateChannelNameTemplate(template) {
     const normalizedTemplate = template.normalize('NFKC').replace(CONTROL_AND_INVISIBLE_CHARS_REGEX, '').trim();
 
     if (normalizedTemplate.length > CHANNEL_NAME_MAX_LENGTH) {
-        throw new DefendoBotError(
+        throw new TitanBotError(
             'Channel template exceeds maximum length',
             ErrorTypes.VALIDATION,
             `Channel name template cannot exceed ${CHANNEL_NAME_MAX_LENGTH} characters.`
@@ -47,7 +47,7 @@ export function validateChannelNameTemplate(template) {
     }
 
     if (/[@#:`]/.test(normalizedTemplate)) {
-        throw new DefendoBotError(
+        throw new TitanBotError(
             'Channel template contains forbidden characters',
             ErrorTypes.VALIDATION,
             'Channel template cannot contain @, #, :, or backtick characters.'
@@ -57,7 +57,7 @@ export function validateChannelNameTemplate(template) {
     const placeholders = normalizedTemplate.match(/\{[^}]+\}/g) || [];
     for (const placeholder of placeholders) {
         if (!ALLOWED_TEMPLATE_PLACEHOLDERS.has(placeholder)) {
-            throw new DefendoBotError(
+            throw new TitanBotError(
                 'Channel template contains unknown placeholders',
                 ErrorTypes.VALIDATION,
                 `Unknown placeholder: ${placeholder}. Allowed placeholders are ${Array.from(ALLOWED_TEMPLATE_PLACEHOLDERS).join(', ')}`
@@ -72,7 +72,7 @@ export function validateBitrate(bitrate) {
     const bitrateNum = parseInt(bitrate);
 
     if (isNaN(bitrateNum)) {
-        throw new DefendoBotError(
+        throw new TitanBotError(
             'Bitrate must be a valid number',
             ErrorTypes.VALIDATION,
             'Please enter a valid number for bitrate.'
@@ -80,7 +80,7 @@ export function validateBitrate(bitrate) {
     }
 
     if (bitrateNum < 8 || bitrateNum > 384) {
-        throw new DefendoBotError(
+        throw new TitanBotError(
             'Bitrate out of valid range',
             ErrorTypes.VALIDATION,
             'Bitrate must be between 8 and 384 kbps.'
@@ -94,7 +94,7 @@ export function validateUserLimit(limit) {
     const limitNum = parseInt(limit);
 
     if (isNaN(limitNum)) {
-        throw new DefendoBotError(
+        throw new TitanBotError(
             'User limit must be a valid number',
             ErrorTypes.VALIDATION,
             'Please enter a valid number for user limit.'
@@ -102,7 +102,7 @@ export function validateUserLimit(limit) {
     }
 
     if (limitNum < 0 || limitNum > 99) {
-        throw new DefendoBotError(
+        throw new TitanBotError(
             'User limit out of valid range',
             ErrorTypes.VALIDATION,
             'User limit must be between 0 (no limit) and 99.'
@@ -118,7 +118,7 @@ export function formatChannelName(template, variables) {
         validateChannelNameTemplate(safeTemplate);
 
         if (!variables || typeof variables !== 'object') {
-            throw new DefendoBotError(
+            throw new TitanBotError(
                 'Invalid variables object for channel formatting',
                 ErrorTypes.VALIDATION
             );

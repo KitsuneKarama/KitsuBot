@@ -15,11 +15,12 @@ const WORK_JOBS = [
     "Barista",
     "Janitor",
     "YouTuber",
+    "Discord Bot Developer",
+    "Cashier",
     "Pizza Delivery Driver",
     "Librarian",
     "Gardener",
     "Data Analyst",
-    "Basement Mod for Karama",
 ];
 
 export default {

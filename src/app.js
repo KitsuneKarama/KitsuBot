@@ -90,13 +90,9 @@ class TitanBot extends Client {
       await this.login(this.config.bot.token);
       startupLog('Discord login successful');
       
-      if (this.config.bot.commands?.syncOnStartup !== false) {
-        startupLog('Synchronizing slash commands on startup...');
-        await this.registerCommands();
-        startupLog('Slash commands synchronization complete');
-      } else {
-        startupLog('Slash command synchronization is disabled on startup');
-      }
+      startupLog('Registering slash commands globally...');
+      await this.registerCommands();
+      startupLog('Slash commands registration complete');
       
       const databaseMode = dbStatus.isDegraded
         ? 'Optional in-memory mode (data resets after restart)'

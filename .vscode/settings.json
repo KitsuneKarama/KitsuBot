@@ -1,5 +1,4 @@
 {
   "files.encoding": "utf8",
-  "files.autoGuessEncoding": false,
-  "DockerRun.DisableAutoGenerateConfig": true
+  "files.autoGuessEncoding": false
 }

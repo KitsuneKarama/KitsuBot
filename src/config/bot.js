@@ -42,10 +42,7 @@ export const botConfig = {
     defaultCooldown: 3,
 
     // If true, old commands are removed before re-registering.
-    deleteCommands: true,
-
-    // If true, slash commands are synchronized with Discord at startup.
-    syncOnStartup: process.env.SYNC_SLASH_COMMANDS_ON_STARTUP !== 'false',
+    deleteCommands: false,
 
     // Optional server ID retained for tutorial compatibility; not used for command registration.
     testGuildId: process.env.TEST_GUILD_ID,
@@ -144,7 +141,7 @@ export const botConfig = {
     },
     footer: {
       // Default footer text used in bot embeds.
-      text: "kitsunBot",
+      text: "Titan Bot",
       // Footer icon URL (null = no icon).
       icon: null,
     },
@@ -399,7 +396,6 @@ export const botConfig = {
       // Channel name format. `{count}` is replaced automatically.
       channelName: "{name}-{count}",
     },
-
     permissions: {
       // Default denied permissions for the counter channel.
       deny: ["VIEW_CHANNEL"],
@@ -460,8 +456,8 @@ export const botConfig = {
     welcome: true,
 
     // Community engagement systems.
-    tickets: false,
-    giveaways: false,
+    tickets: true,
+    giveaways: true,
     birthday: true,
     counter: true,
 
@@ -477,7 +473,7 @@ export const botConfig = {
     utility: true,
     community: true,
     fun: true,
-    music: false,
+    music: true,
   },
 };
 
@@ -485,26 +481,20 @@ export function validateConfig(config) {
   const errors = [];
 
   if (process.env.NODE_ENV !== 'production') {
-    logger.debug(`Environment variables check:`);
-    logger.debug(`DISCORD_TOKEN exists: ${!!process.env.DISCORD_TOKEN}`);
-    logger.debug(`TOKEN exists: ${!!process.env.TOKEN}`);
-    logger.debug(`CLIENT_ID exists: ${!!process.env.CLIENT_ID}`);
-    logger.debug(`GUILD_ID exists: ${!!process.env.GUILD_ID}`);
-    logger.debug(`POSTGRES_HOST exists: ${!!process.env.POSTGRES_HOST}`);
-    logger.debug(`POSTGRES_PASSWORD exists: ${!!process.env.POSTGRES_PASSWORD}`);
-    logger.debug(`PGPASSWORD exists: ${!!process.env.PGPASSWORD}`);
-    logger.debug(`NODE_ENV: ${process.env.NODE_ENV}`);
+    logger.debug('Environment variables check:');
+    logger.debug('DISCORD_TOKEN exists:', !!process.env.DISCORD_TOKEN);
+    logger.debug('TOKEN exists:', !!process.env.TOKEN);
+    logger.debug('CLIENT_ID exists:', !!process.env.CLIENT_ID);
+    logger.debug('GUILD_ID exists:', !!process.env.GUILD_ID);
+    logger.debug('POSTGRES_HOST exists:', !!process.env.POSTGRES_HOST);
+    logger.debug('NODE_ENV:', process.env.NODE_ENV);
   }
 
-  const botToken = process.env.DISCORD_TOKEN?.trim() || process.env.TOKEN?.trim();
-
-  if (!botToken) {
+  if (!process.env.DISCORD_TOKEN && !process.env.TOKEN) {
     errors.push("Bot token is required (DISCORD_TOKEN or TOKEN environment variable)");
-  } else if (!/^[A-Za-z0-9_\-.]+$/.test(botToken) || botToken.split('.').length !== 3) {
-    errors.push("Bot token appears invalid. Ensure DISCORD_TOKEN or TOKEN is set to a valid Discord bot token.");
   }
 
-  if (!process.env.CLIENT_ID?.trim()) {
+  if (!process.env.CLIENT_ID) {
     errors.push("Client ID is required (CLIENT_ID environment variable)");
   }
 
@@ -531,12 +521,13 @@ export function validateConfig(config) {
 
 const configErrors = validateConfig(botConfig);
 if (configErrors.length > 0) {
-  logger.error(`Bot configuration errors:\n${configErrors.map((error) => `- ${error}`).join('\n')}`);
-  process.exit(1);
+  logger.error("Bot configuration errors:", configErrors.join("\n"));
+  if (process.env.NODE_ENV === "production") {
+    process.exit(1);
+  }
 }
 
 export const BotConfig = botConfig;
-
 
 const COMMAND_CATEGORY_FEATURE_MAP = {
   birthday: "birthday",
