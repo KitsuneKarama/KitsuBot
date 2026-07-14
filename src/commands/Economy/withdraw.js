@@ -66,6 +66,7 @@ export default {
         await setEconomyData(client, guildId, userId, userData);
 
         const capped = withdrawAmount < amountInput;
+
         const embed = successEmbed(
             'Withdrawal Successful',
             `You successfully withdrew **\[ {withdrawAmount.toLocaleString()}** from your bank.` +
@@ -80,7 +81,7 @@ export default {
                 name: "New Bank Balance",
                 value: ` \]{userData.bank.toLocaleString()}`,
                 inline: true,
-            },
+            }
         );
 
         await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });
