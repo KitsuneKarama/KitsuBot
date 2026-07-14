@@ -2,7 +2,7 @@ import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { createEmbed, errorEmbed, successEmbed, infoEmbed, warningEmbed } from '../../utils/embeds.js';
 import { shopItems, validatePurchase } from '../../config/shop/items.js';
 import { getEconomyData, setEconomyData } from '../../utils/economy.js';
-import { getGuildConfig } from '../../services/guildConfig.js';
+import { getGuildConfig } from '../../services/config/guildConfig.js';
 import { withErrorHandling, createError, ErrorTypes } from '../../utils/errorHandler.js';
 import { InteractionHelper } from '../../utils/interactionHelper.js';
 
@@ -144,16 +144,14 @@ export default {
                     );
                 }
             } else if (item.type === "upgrade") {
-                userData.upgrades[itemId] = (userData.upgrades[itemId] || 0) + quantity;
-                if (itemId === 'bank_upgrade_1') {
-                    const effectiveLevel = Math.min(userData.upgrades[itemId], 20);
-                    successDescription += `\n\n**✨ Your upgrade is now active at level ${userData.upgrades[itemId]} (effective level: ${effectiveLevel}/20)!**`;
-                } else {
-                    successDescription += `\n\n**✨ Your upgrade is now active at level ${userData.upgrades[itemId]}!**`;
-                }
-            } else if (item.type === "tool" || item.type === "consumable") {
+                userData.upgrades[itemId] = true;
+                successDescription += `\n\n**✨ Your upgrade is now active!**`;
+            } else if (item.type === "consumable" || item.type === "tool") {
                 userData.inventory[itemId] =
                     (userData.inventory[itemId] || 0) + quantity;
+                if (item.type === "tool") {
+                    successDescription += `\n\n**🛠️ ${item.name} added to your inventory!**`;
+                }
             }
 
             await setEconomyData(client, guildId, userId, userData);
