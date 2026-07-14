@@ -485,16 +485,18 @@ export function validateConfig(config) {
   const errors = [];
 
   if (process.env.NODE_ENV !== 'production') {
-    logger.debug('Environment variables check:');
-    logger.debug('DISCORD_TOKEN exists:', !!process.env.DISCORD_TOKEN);
-    logger.debug('TOKEN exists:', !!process.env.TOKEN);
-    logger.debug('CLIENT_ID exists:', !!process.env.CLIENT_ID);
-    logger.debug('GUILD_ID exists:', !!process.env.GUILD_ID);
-    logger.debug('POSTGRES_HOST exists:', !!process.env.POSTGRES_HOST);
-    logger.debug('NODE_ENV:', process.env.NODE_ENV);
+    logger.debug(`Environment variables check:`);
+    logger.debug(`DISCORD_TOKEN exists: ${!!process.env.DISCORD_TOKEN}`);
+    logger.debug(`TOKEN exists: ${!!process.env.TOKEN}`);
+    logger.debug(`CLIENT_ID exists: ${!!process.env.CLIENT_ID}`);
+    logger.debug(`GUILD_ID exists: ${!!process.env.GUILD_ID}`);
+    logger.debug(`POSTGRES_HOST exists: ${!!process.env.POSTGRES_HOST}`);
+    logger.debug(`POSTGRES_PASSWORD exists: ${!!process.env.POSTGRES_PASSWORD}`);
+    logger.debug(`PGPASSWORD exists: ${!!process.env.PGPASSWORD}`);
+    logger.debug(`NODE_ENV: ${process.env.NODE_ENV}`);
   }
 
-  const botToken = process.env.DISCORD_TOKEN || process.env.TOKEN;
+  const botToken = process.env.DISCORD_TOKEN?.trim() || process.env.TOKEN?.trim();
 
   if (!botToken) {
     errors.push("Bot token is required (DISCORD_TOKEN or TOKEN environment variable)");
@@ -502,7 +504,7 @@ export function validateConfig(config) {
     errors.push("Bot token appears invalid. Ensure DISCORD_TOKEN or TOKEN is set to a valid Discord bot token.");
   }
 
-  if (!process.env.CLIENT_ID) {
+  if (!process.env.CLIENT_ID?.trim()) {
     errors.push("Client ID is required (CLIENT_ID environment variable)");
   }
 
@@ -529,10 +531,8 @@ export function validateConfig(config) {
 
 const configErrors = validateConfig(botConfig);
 if (configErrors.length > 0) {
-  logger.error("Bot configuration errors:", configErrors.join("\n"));
-  if (process.env.NODE_ENV === "production") {
-    process.exit(1);
-  }
+  logger.error(`Bot configuration errors:\n${configErrors.map((error) => `- ${error}`).join('\n')}`);
+  process.exit(1);
 }
 
 export const BotConfig = botConfig;
