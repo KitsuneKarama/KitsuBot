@@ -18,11 +18,11 @@ const TEXT_CHANNEL_TYPES = [
 
 function resolveTargetChannel(interaction) {
     const selected = interaction.options.getChannel('channel');
-    if (selected) {
+    if (selected && selected.isTextBased?.()) {
         return selected;
     }
 
-    if (!interaction.channel || !TEXT_CHANNEL_TYPES.includes(interaction.channel.type)) {
+    if (!interaction.channel || !interaction.channel.isTextBased?.()) {
         return null;
     }
 
@@ -83,7 +83,7 @@ export default {
             });
         }
 
-        const memberPermissions = channel.permissionsFor(interaction.member);
+        const memberPermissions = channel.permissionsFor(interaction.member ?? interaction.user);
         const botPermissions = channel.permissionsFor(interaction.guild.members.me);
 
         if (!memberPermissions?.has(PermissionFlagsBits.SendMessages)) {
