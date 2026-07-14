@@ -68,7 +68,7 @@ export async function loadCommands(client) {
             const commandDir = path.dirname(filePath);
             const category = path.basename(commandDir);
             
-            const commandModule = await import(`file://${filePath}`);
+            const commandModule = await import(pathToFileURL(filePath).href);
             const command = commandModule.default || commandModule;
             
             if (!command.data || !command.execute) {
@@ -237,7 +237,9 @@ function prepareCommandsForRegistration(commands) {
 }
 
 async function registerGlobalCommands(client, clientId, commands, totalSubcommands) {
-    if (!clientId) {
+    const applicationId = clientId || client.user?.id || client.application?.id;
+
+    if (!applicationId) {
         throw new Error('CLIENT_ID is required for slash command registration');
     }
 
@@ -254,11 +256,11 @@ async function registerGlobalCommands(client, clientId, commands, totalSubcomman
 
     if (botConfig.commands?.deleteCommands) {
         logger.info('Clearing existing global commands before registration...');
-        await client.rest.put(`/applications/${clientId}/commands`, { body: [] });
+        await client.rest.put(`/applications/${applicationId}/commands`, { body: [] });
     }
 
     logger.info(`Registering ${commandsToRegister.length} global commands...`);
-    await client.rest.put(`/applications/${clientId}/commands`, { body: commandsToRegister });
+    await client.rest.put(`/applications/${applicationId}/commands`, { body: commandsToRegister });
     logger.info(`Successfully registered ${commandsToRegister.length} global commands`);
     logger.info('Global commands may take up to an hour to appear in all servers on first deploy');
 }
