@@ -65,70 +65,85 @@ export default {
             return;
         }
 
-        const rawMessage = interaction.options.getString('message');
-        const message = sanitizeInput(rawMessage, 2000);
+        try {
+            const rawMessage = interaction.options.getString('message');
+            const message = sanitizeInput(rawMessage, 2000);
 
-        if (!message) {
-            return replyUserError(interaction, {
-                type: ErrorTypes.VALIDATION,
-                message: 'Message cannot be empty.',
+            logger.debug('Say command received', {
+                rawMessageLength: rawMessage?.length,
+                sanitizedLength: message?.length,
+                userId: interaction.user.id,
+                guildId: interaction.guildId,
             });
-        }
 
-        const channel = resolveTargetChannel(interaction);
-        if (!channel) {
-            return replyUserError(interaction, {
-                type: ErrorTypes.VALIDATION,
-                message: 'Choose a text channel or run this command in one.',
-            });
-        }
+            if (!message) {
+                return replyUserError(interaction, {
+                    type: ErrorTypes.VALIDATION,
+                    message: 'Message cannot be empty.',
+                });
+            }
 
-        const memberPermissions = channel.permissionsFor(interaction.member);
-        const botPermissions = channel.permissionsFor(interaction.guild.members.me);
+            const channel = resolveTargetChannel(interaction);
+            if (!channel) {
+                return replyUserError(interaction, {
+                    type: ErrorTypes.VALIDATION,
+                    message: 'Choose a text channel or run this command in one.',
+                });
+            }
 
-        if (!memberPermissions?.has(PermissionFlagsBits.SendMessages)) {
-            return replyUserError(interaction, {
-                type: ErrorTypes.PERMISSION,
-                message: `You do not have permission to send messages in ${channel}.`,
-            });
-        }
+            const memberPermissions = channel.permissionsFor(interaction.member);
+            const botPermissions = channel.permissionsFor(interaction.guild.members.me);
 
-        if (!botPermissions?.has(PermissionFlagsBits.SendMessages)) {
-            return replyUserError(interaction, {
-                type: ErrorTypes.PERMISSION,
-                message: `I do not have permission to send messages in ${channel}.`,
-            });
-        }
+            if (!memberPermissions?.has(PermissionFlagsBits.SendMessages)) {
+                return replyUserError(interaction, {
+                    type: ErrorTypes.PERMISSION,
+                    message: `You do not have permission to send messages in ${channel}.`,
+                });
+            }
 
-        const sentMessage = await channel.send({ content: message });
+            if (!botPermissions?.has(PermissionFlagsBits.SendMessages)) {
+                return replyUserError(interaction, {
+                    type: ErrorTypes.PERMISSION,
+                    message: `I do not have permission to send messages in ${channel}.`,
+                });
+            }
 
-        await logEvent({
-            client,
-            guild: interaction.guild,
-            event: {
-                action: 'Bot Message Sent',
-                target: `${channel} (${channel.id})`,
-                executor: `${interaction.user.tag} (${interaction.user.id})`,
-                reason: message.length > 200
-                    ? `${message.slice(0, 197)}...`
-                    : message,
-                metadata: {
-                    channelId: channel.id,
-                    messageId: sentMessage.id,
-                    moderatorId: interaction.user.id,
-                    messageLength: message.length,
+            const sentMessage = await channel.send({ content: message });
+
+            await logEvent({
+                client,
+                guild: interaction.guild,
+                event: {
+                    action: 'Bot Message Sent',
+                    target: `${channel} (${channel.id})`,
+                    executor: `${interaction.user.tag} (${interaction.user.id})`,
+                    reason: message.length > 200
+                        ? `${message.slice(0, 197)}...`
+                        : message,
+                    metadata: {
+                        channelId: channel.id,
+                        messageId: sentMessage.id,
+                        moderatorId: interaction.user.id,
+                        messageLength: message.length,
+                    },
                 },
-            },
-        });
+            });
 
-        await InteractionHelper.safeEditReply(interaction, {
-            embeds: [
-                successEmbed(
-                    'Message Sent',
-                    `Posted in ${channel}. [Jump to message](${sentMessage.url})`,
-                ),
-            ],
-            flags: MessageFlags.Ephemeral,
-        });
+            await InteractionHelper.safeEditReply(interaction, {
+                embeds: [
+                    successEmbed(
+                        'Message Sent',
+                        `Posted in ${channel}. [Jump to message](${sentMessage.url})`,
+                    ),
+                ],
+                flags: MessageFlags.Ephemeral,
+            });
+        } catch (error) {
+            logger.error('Error in say command:', error);
+            await replyUserError(interaction, {
+                type: ErrorTypes.UNKNOWN,
+                message: 'An error occurred while sending the message.',
+            });
+        }
     },
 };
