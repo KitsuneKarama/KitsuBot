@@ -399,6 +399,7 @@ export const botConfig = {
       // Channel name format. `{count}` is replaced automatically.
       channelName: "{name}-{count}",
     },
+
     permissions: {
       // Default denied permissions for the counter channel.
       deny: ["VIEW_CHANNEL"],
@@ -531,6 +532,7 @@ if (configErrors.length > 0) {
 }
 
 export const BotConfig = botConfig;
+
 
 const COMMAND_CATEGORY_FEATURE_MAP = {
   birthday: "birthday",
