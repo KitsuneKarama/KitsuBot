@@ -1,5 +1,0 @@
-// Clear guild commands (fast)
-await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] });
-
-// Optionally clear global commands (slower, \~1 hour)
-// await rest.put(Routes.applicationCommands(clientId), { body: [] });
