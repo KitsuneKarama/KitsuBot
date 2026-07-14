@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-import { createEmbed, successEmbed } from '../../utils/embeds.js';
+import { successEmbed } from '../../utils/embeds.js';
 import { getEconomyData, setEconomyData } from '../../utils/economy.js';
 import { withErrorHandling, createError, ErrorTypes } from '../../utils/errorHandler.js';
 import { InteractionHelper } from '../../utils/interactionHelper.js';
@@ -45,6 +45,7 @@ export default {
 
         let withdrawAmount = amountInput;
 
+        // Cap at available bank balance
         if (withdrawAmount > userData.bank) {
             withdrawAmount = userData.bank;
         }
@@ -58,8 +59,7 @@ export default {
             );
         }
 
-        // Perform withdrawal
-        const originalBank = userData.bank;
+        // Execute withdrawal
         userData.wallet += withdrawAmount;
         userData.bank -= withdrawAmount;
 
@@ -69,7 +69,7 @@ export default {
         const embed = successEmbed(
             'Withdrawal Successful',
             `You successfully withdrew **\[ {withdrawAmount.toLocaleString()}** from your bank.` +
-            (capped ? `\n\n(Only \]{withdrawAmount.toLocaleString()} was available.)` : '')
+            (capped ? `\n\n(Only \]{withdrawAmount.toLocaleString()} was available in your bank.)` : '')
         ).addFields(
             {
                 name: "New Cash Balance",
