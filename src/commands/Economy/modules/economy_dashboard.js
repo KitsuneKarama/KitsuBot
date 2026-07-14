@@ -114,20 +114,21 @@ async function updateConfigFile(currencySymbol, currencyName) {
     try {
         const configPath = path.join(__dirname, '../../../config/bot.js');
         let configContent = await fs.readFile(configPath, 'utf-8');
-
+        // Use anchored, multiline-safe replacements to match the current
+        // formatting in src/config/bot.js (comments are on preceding lines).
         configContent = configContent.replace(
-            /symbol:\s*"[^"]*"/,
-            `symbol: "${currencySymbol}"`
+            /^(\s*symbol:\s*)"([^"]*)",?/m,
+            `$1"${currencySymbol}",`
         );
 
         configContent = configContent.replace(
-            /name:\s*"[^"]*",\s*\/\/\s*Currency display name/,
-            `name: "${currencyName}", // Currency display name`
+            /^(\s*name:\s*)"([^"]*)",?/m,
+            `$1"${currencyName}",`
         );
 
         configContent = configContent.replace(
-            /namePlural:\s*"[^"]*",\s*\/\/\s*Plural display name/,
-            `namePlural: "${currencyName}s", // Plural display name`
+            /^(\s*namePlural:\s*)"([^"]*)",?/m,
+            `$1"${currencyName}s",`
         );
         
         await fs.writeFile(configPath, configContent, 'utf-8');
