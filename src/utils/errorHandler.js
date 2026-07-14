@@ -50,6 +50,9 @@ export class DefendoBotError extends Error {
     }
 }
 
+// Backwards compatibility: some modules still import `TitanBotError`.
+export const TitanBotError = DefendoBotError;
+
 // Discord API error codes that indicate a permission problem rather than a bug.
 const DISCORD_PERMISSION_CODES = new Set([
     50001, // Missing Access

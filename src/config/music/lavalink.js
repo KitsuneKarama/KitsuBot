@@ -64,16 +64,12 @@ export function getLavalinkNodes() {
     const password = process.env.LAVALINK_PASSWORD || 'youshallnotpass';
     const secure = parseBoolean(process.env.LAVALINK_SECURE, false);
 
-    return [{
-        host,
-        port,
-        password,
-        secure,
+    const node = {
+        host: process.env.LAVALINK_HOST || host,
+        port: Number(process.env.LAVALINK_PORT || port),
+        password: process.env.LAVALINK_PASSWORD || password,
+        secure: parseBoolean(process.env.LAVALINK_SECURE, secure),
         name: process.env.LAVALINK_NAME || 'Main',
-        host: process.env.LAVALINK_HOST || 'localhost',
-        port: parseInt(process.env.LAVALINK_PORT) || 2333,
-        password: process.env.LAVALINK_PASSWORD || 'youshallnotpass',
-        secure: parseBoolean(process.env.LAVALINK_SECURE),
         retryAmount: 5,
         retryDelay: 4000,
     };
