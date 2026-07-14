@@ -17,12 +17,12 @@ cooldown: 86400000,
         id: 'bank_upgrade_1',
         name: 'Bank Upgrade I',
         price: 15000,
-        description: 'Increases bank capacity and allows more funds to be deposited. Can be purchased multiple times (effect caps at level 20).',
+        description: 'Increases bank capacity and allows more funds to be deposited.',
         type: 'upgrade',
-        
+        maxLevel: 5,
         effect: {
             type: 'bank_capacity',
-            multiplier: 2
+            multiplier: 1.5
         }
     },
     {
@@ -46,7 +46,7 @@ cooldown: 86400000,
 roleId: null,
         effect: {
             type: 'daily_bonus',
-            multiplier: 1.5
+            multiplier: 1.1
         }
     },
     {
@@ -72,19 +72,6 @@ roleId: null,
         effect: {
             type: 'fishing_yield',
             multiplier: 1.0
-        }
-    },
-    {
-        id: 'fishing_rod_upgrade',
-        name: 'Fishing Rod Upgrade',
-        price: 15000,
-        description: 'Upgrades your fishing rod to an enhanced model with increased durability and yield.',
-        type: 'upgrade',
-        maxLevel: 1,
-        effect: {
-            type: 'fishing_yield',
-            multiplier: 2.0,
-            durability: 200
         }
     },
     {
@@ -163,19 +150,18 @@ export function getItemPrice(itemId) {
     return item ? item.price : 0;
 }
 
-export function validatePurchase(itemId, userData, quantity = 1) {
+export function validatePurchase(itemId, userData) {
     const item = getItemById(itemId);
     if (!item) {
         return { valid: false, reason: 'Item not found' };
     }
 
-    const purchaseQuantity = Math.max(1, quantity || 1);
     const inventory = userData.inventory || {};
     const upgrades = userData.upgrades || {};
 
     if (item.type === 'consumable' && item.maxQuantity) {
         const currentQuantity = inventory[itemId] || 0;
-        if (currentQuantity + purchaseQuantity > item.maxQuantity) {
+        if (currentQuantity >= item.maxQuantity) {
             return { 
                 valid: false, 
                 reason: `You can only have a maximum of ${item.maxQuantity} ${item.name}s` 
@@ -183,20 +169,18 @@ export function validatePurchase(itemId, userData, quantity = 1) {
         }
     }
 
-    if (item.type === 'upgrade') {
-        const currentLevel = upgrades[itemId] || 0;
-        // bank_upgrade_1 is allowed to be purchased multiple times; effect capped elsewhere
-        if (itemId !== 'bank_upgrade_1' && item.maxLevel) {
-            if (currentLevel + purchaseQuantity > item.maxLevel) {
-                return { 
-                    valid: false, 
-                    reason: `You can only purchase ${item.name} up to level ${item.maxLevel}` 
-                };
-            }
+    if (item.type === 'upgrade' && item.maxLevel) {
+        
+        if (upgrades[itemId]) {
+            return { 
+                valid: false, 
+                reason: `You've already purchased ${item.name}` 
+            };
         }
     }
 
     if (item.type === 'tool') {
+        
         const currentQuantity = inventory[itemId] || 0;
         if (itemId !== 'bank_note' && currentQuantity > 0) {
             return { 

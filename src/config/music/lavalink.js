@@ -5,18 +5,22 @@ import { fileURLToPath } from 'url';
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
 function parseBoolean(value, defaultValue = false) {
-    if (value == null || value === '') return defaultValue;
-    return ['true', '1', 'yes', 'on'].includes(String(value).toLowerCase().trim());
+    if (value === undefined || value === null || value === '') {
+        return defaultValue;
+    }
+    return ['true', '1', 'yes'].includes(String(value).toLowerCase());
 }
 
 function parseNodesFromEnv() {
     const raw = process.env.LAVALINK_NODES?.trim();
-    if (!raw) return null;
+    if (!raw) {
+        return null;
+    }
+
     try {
         const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) && parsed.length ? parsed : null;
-    } catch (e) {
-        console.warn('❌ Failed to parse LAVALINK_NODES:', e.message);
+        return Array.isArray(parsed) ? parsed : null;
+    } catch {
         return null;
     }
 }
@@ -48,10 +52,9 @@ function loadNodesFromFile() {
 }
 
 export function getLavalinkNodes() {
-    const nodes = parseNodesFromEnv();
-    if (nodes?.length) {
-        console.log(`✅ Loaded ${nodes.length} node(s) from LAVALINK_NODES`);
-        return nodes;
+    const fromJson = parseNodesFromEnv();
+    if (fromJson?.length) {
+        return fromJson;
     }
 
     const fromFile = loadNodesFromFile();
@@ -64,29 +67,19 @@ export function getLavalinkNodes() {
     const password = process.env.LAVALINK_PASSWORD || 'youshallnotpass';
     const secure = parseBoolean(process.env.LAVALINK_SECURE, false);
 
-    const node = {
-        host: process.env.LAVALINK_HOST || host,
-        port: Number(process.env.LAVALINK_PORT || port),
-        password: process.env.LAVALINK_PASSWORD || password,
-        secure: parseBoolean(process.env.LAVALINK_SECURE, secure),
+    return [{
+        host,
+        port,
+        password,
+        secure,
         name: process.env.LAVALINK_NAME || 'Main',
-        retryAmount: 5,
-        retryDelay: 4000,
-    };
-
-    console.log(`🔌 Lavalink Config:`);
-    console.log(`   Host     : ${node.host}`);
-    console.log(`   Port     : ${node.port}`);
-    console.log(`   Secure   : ${node.secure}`);
-    console.log(`   Password : ${node.password ? '••••••••' : 'None'}`);
-
-    return [node];
+    }];
 }
 
 export const lavalinkConfig = {
     nodes: getLavalinkNodes(),
     defaultSearchPlatform: process.env.LAVALINK_SEARCH_PLATFORM || 'ytmsearch',
-    restVersion: 'v4',
+    restVersion: process.env.LAVALINK_REST_VERSION || 'v4',
 };
 
 export default lavalinkConfig;

@@ -38,10 +38,10 @@ export const ErrorTypes = {
     UNKNOWN: 'unknown'
 };
 
-export class DefendoBotError extends Error {
+export class TitanBotError extends Error {
     constructor(message, type = ErrorTypes.UNKNOWN, userMessage = null, context = {}) {
         super(message);
-        this.name = 'DefendoBotError';
+        this.name = 'TitanBotError';
         this.type = type;
         this.userMessage = userMessage;
         this.context = context;
@@ -49,9 +49,6 @@ export class DefendoBotError extends Error {
         this.timestamp = new Date().toISOString();
     }
 }
-
-// Backwards compatibility: some modules still import `TitanBotError`.
-export const TitanBotError = DefendoBotError;
 
 // Discord API error codes that indicate a permission problem rather than a bug.
 const DISCORD_PERMISSION_CODES = new Set([
@@ -71,7 +68,7 @@ const DATABASE_ERROR_CODES = new Set([
 ]);
 
 export function categorizeError(error) {
-    if (error instanceof DefendoBotError) {
+    if (error instanceof TitanBotError) {
         return error.type;
     }
 
@@ -452,12 +449,12 @@ export function createError(message, type = ErrorTypes.UNKNOWN, userMessage = nu
         errorCode: context?.errorCode || getDefaultErrorCodeByType(type)
     };
 
-    return new DefendoBotError(message, type, userMessage, normalizedContext);
+    return new TitanBotError(message, type, userMessage, normalizedContext);
 }
 
 export default {
     ErrorTypes,
-    DefendoBotError,
+    TitanBotError,
     categorizeError,
     getUserMessage,
     replyUserError,

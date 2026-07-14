@@ -95,8 +95,8 @@ export default {
                 })
                 .setFooter({
                     text: hasPremiumRole
-                        ? `Next claim in 30 Seconds. (Premium Active)`
-                        : `Next claim in 30 Seconds.`,
+                        ? `Next claim in 24 hours. (Premium Active)`
+                        : `Next claim in 24 hours.`,
                 });
 
             await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });

@@ -11,7 +11,6 @@ import { createError, ErrorTypes, wrapServiceBoundary } from './errorHandler.js'
 const ECONOMY_CONFIG = BotConfig.economy || {};
 const BASE_BANK_CAPACITY = ECONOMY_CONFIG.baseBankCapacity || 10000;
 const BANK_CAPACITY_PER_LEVEL = ECONOMY_CONFIG.bankCapacityPerLevel || 5000;
-const MAX_BANK_UPGRADE_LEVEL = 20;
 const DAILY_AMOUNT = ECONOMY_CONFIG.dailyAmount || 100;
 const WORK_MIN = ECONOMY_CONFIG.workMin || 10;
 const WORK_MAX = ECONOMY_CONFIG.workMax || 100;
@@ -42,10 +41,8 @@ export function getMaxBankCapacity(userData) {
     const upgrades = userData.upgrades || {};
     const inventory = userData.inventory || {};
 
-    const bankUpgradeLevel = Number(upgrades['bank_upgrade_1'] || 0);
-    const effectiveBankUpgradeLevel = Math.min(Math.max(0, bankUpgradeLevel), MAX_BANK_UPGRADE_LEVEL);
-    if (effectiveBankUpgradeLevel > 0) {
-        capacity = Math.floor(capacity * Math.pow(1.5, effectiveBankUpgradeLevel));
+    if (upgrades['bank_upgrade_1']) {
+        capacity = Math.floor(capacity * 1.5);
     }
 
     const bankNotes = inventory['bank_note'] || 0;

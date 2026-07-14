@@ -18,11 +18,11 @@ const TEXT_CHANNEL_TYPES = [
 
 function resolveTargetChannel(interaction) {
     const selected = interaction.options.getChannel('channel');
-    if (selected && selected.isTextBased?.()) {
+    if (selected) {
         return selected;
     }
 
-    if (!interaction.channel || !interaction.channel.isTextBased?.()) {
+    if (!interaction.channel || !TEXT_CHANNEL_TYPES.includes(interaction.channel.type)) {
         return null;
     }
 
@@ -83,16 +83,7 @@ export default {
             });
         }
 
-        let invokingMember = interaction.member;
-        if (!invokingMember && interaction.guild) {
-            try {
-                invokingMember = await interaction.guild.members.fetch(interaction.user.id);
-            } catch (e) {
-                invokingMember = null;
-            }
-        }
-
-        const memberPermissions = channel.permissionsFor(invokingMember);
+        const memberPermissions = channel.permissionsFor(interaction.member);
         const botPermissions = channel.permissionsFor(interaction.guild.members.me);
 
         if (!memberPermissions?.has(PermissionFlagsBits.SendMessages)) {

@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { createEmbed, errorEmbed, successEmbed, infoEmbed, warningEmbed } from '../../utils/embeds.js';
-import { shopItems, validatePurchase } from '../../config/shop/items.js';
+import { shopItems } from '../../config/shop/items.js';
 import { getEconomyData, setEconomyData } from '../../utils/economy.js';
 import { getGuildConfig } from '../../services/config/guildConfig.js';
 import { withErrorHandling, createError, ErrorTypes } from '../../utils/errorHandler.js';
@@ -21,8 +21,8 @@ export default {
         .addIntegerOption(option =>
             option
                 .setName('quantity')
-                .setDescription('Quantity to buy')
-                .setRequired(true)
+                .setDescription('Quantity to buy (default: 1)')
+                .setRequired(false)
                 .setMinValue(1)
                 .setMaxValue(10)
         ),
@@ -62,16 +62,6 @@ export default {
             const PREMIUM_ROLE_ID = guildConfig.premiumRoleId;
 
             const userData = await getEconomyData(client, guildId, userId);
-
-            const purchaseValidation = validatePurchase(itemId, userData, quantity);
-            if (!purchaseValidation.valid) {
-                throw createError(
-                    "Purchase not allowed",
-                    ErrorTypes.VALIDATION,
-                    purchaseValidation.reason,
-                    { itemId, quantity }
-                );
-            }
 
             if (userData.wallet < totalCost) {
                 throw createError(
