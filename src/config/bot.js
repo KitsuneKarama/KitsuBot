@@ -48,7 +48,7 @@ export const botConfig = {
     testGuildId: process.env.TEST_GUILD_ID,
 
     // When true (or MAINTENANCE_MODE=true), only bot owners can run commands.
-    maintenanceMode: process.env.MAINTENANCE_MODE === "false",
+    maintenanceMode: process.env.MAINTENANCE_MODE === "true",
 
     // Command prefix for text-based commands (e.g., "!" for "!ping").
     // Supports both slash commands and prefix commands.
@@ -172,18 +172,18 @@ export const botConfig = {
     startingBalance: 0,
 
     // Maximum bank amount before upgrades (if upgrades are used).
-    baseBankCapacity: 100000,
+    baseBankCapacity: 1000000,
 
     // Daily reward amount.
     dailyAmount: 100,
 
     // Work command random payout range.
-    workMin: 10,
-    workMax: 100,
+    workMin: 100,
+    workMax: 1000,
 
     // Beg command random payout range.
-    begMin: 5,
-    begMax: 50,
+    begMin: 50,
+    begMax: 500,
 
     // Command cooldowns (milliseconds).
     cooldowns: {
@@ -198,7 +198,7 @@ export const botConfig = {
 
     // Jail time after failed rob (milliseconds).
     // 3600000 = 1 hour.
-    robFailJailTime: 3600000,
+    robFailJailTime: 300000,
   },
 
   // =========================
