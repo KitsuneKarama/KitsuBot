@@ -25,7 +25,7 @@ export const botConfig = {
       {
         name: "kitsune break my code", // required by Discord API, not shown in the client
         state: "KitsuneKarama is stinky",     // this is what people actually see
-        type: 1,               // Custom
+        type: 0,               // Custom
       },
     ],
   },
