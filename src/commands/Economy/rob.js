@@ -7,8 +7,8 @@ import { BotConfig } from '../../config/bot.js';
 
 const ROB_COOLDOWN = BotConfig.economy?.cooldowns?.rob ?? 4 * 60 * 60 * 1000;
 const BASE_ROB_SUCCESS_CHANCE = BotConfig.economy?.robSuccessRate ?? 0.4;
-const ROB_PERCENTAGE = 0.15;
-const FINE_PERCENTAGE = 0.1;
+const ROB_PERCENTAGE = 0.20;
+const FINE_PERCENTAGE = 0.5;
 
 export default {
     data: new SlashCommandBuilder()
